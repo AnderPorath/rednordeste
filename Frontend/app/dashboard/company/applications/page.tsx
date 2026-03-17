@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
@@ -14,6 +14,26 @@ import { fetchCompanyApplications, fetchCompanyJobs, type ApiApplication, type A
 import { useAuth } from "@/lib/auth-context";
 
 export default function ApplicationsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="flex-1 bg-muted/30">
+            <div className="container mx-auto px-4 py-8">
+              <p className="text-muted-foreground">Cargando...</p>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
+      <ApplicationsPageInner />
+    </Suspense>
+  );
+}
+
+function ApplicationsPageInner() {
   const sp = useSearchParams();
   const jobId = sp.get("job") ?? undefined;
   const { isReady, isLoggedIn, userType, company, getAuthHeaders } = useAuth();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
@@ -13,6 +13,26 @@ import { fetchCompanyCandidate, type ApiCandidateProfile } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 
 export default function CompanyCandidateProfilePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="flex-1 bg-muted/30">
+            <div className="container mx-auto px-4 py-8">
+              <p className="text-muted-foreground">Cargando...</p>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
+      <CompanyCandidateProfilePageInner />
+    </Suspense>
+  );
+}
+
+function CompanyCandidateProfilePageInner() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const sp = useSearchParams();
