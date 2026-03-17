@@ -31,8 +31,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Ruta de prueba en la raíz
-app.get("/", (_req, res) => {
+app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
