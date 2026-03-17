@@ -44,7 +44,7 @@ const path_1 = __importDefault(require("path"));
 const data = __importStar(require("../data"));
 const auth_1 = require("../middleware/auth");
 const upload_1 = require("../upload");
-const db_1 = require("../db");
+const db_1 = __importDefault(require("../db"));
 const userSchema = zod_1.z.object({
     name: zod_1.z.string().min(1),
     email: zod_1.z.string().email(),
@@ -148,7 +148,7 @@ exports.usersRouter.post("/me/change-password", auth_1.requireUser, async (req, 
         if (!parsed.success)
             return res.status(400).json({ error: parsed.error.flatten() });
         const { currentPassword, newPassword } = parsed.data;
-        const user = await db_1.prisma.user.findUnique({
+        const user = await db_1.default.user.findUnique({
             where: { id: req.user.userId },
             select: { passwordHash: true },
         });

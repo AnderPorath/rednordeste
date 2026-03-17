@@ -2,6 +2,9 @@
 /**
  * Capa de datos: PostgreSQL vía Prisma (DATABASE_URL).
  */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getJobsList = getJobsList;
 exports.getJobsListForAdmin = getJobsListForAdmin;
@@ -24,7 +27,7 @@ exports.deleteUser = deleteUser;
 exports.getApplicationsList = getApplicationsList;
 exports.createApplication = createApplication;
 exports.getApplicationsForCompany = getApplicationsForCompany;
-const db_1 = require("./db");
+const db_1 = __importDefault(require("./db"));
 function requirementsToArray(r) {
     if (Array.isArray(r))
         return r;
@@ -68,7 +71,7 @@ async function getJobsList(filters) {
             { company: { name: { contains: s } } },
         ];
     }
-    const list = await db_1.prisma.job.findMany({
+    const list = await db_1.default.job.findMany({
         where,
         include: { company: true },
         orderBy: { postedAt: "desc" },
@@ -89,7 +92,7 @@ async function getJobsListForAdmin(filters) {
             { company: { name: { contains: s } } },
         ];
     }
-    const list = await db_1.prisma.job.findMany({
+    const list = await db_1.default.job.findMany({
         where,
         include: { company: { select: { id: true, name: true } } },
         orderBy: { postedAt: "desc" },
@@ -100,14 +103,14 @@ async function getJobsListForAdmin(filters) {
     }));
 }
 async function getJobById(id) {
-    const job = await db_1.prisma.job.findUnique({
+    const job = await db_1.default.job.findUnique({
         where: { id },
         include: { company: true },
     });
     return job ? jobToResponse(job) : null;
 }
 async function createJob(data) {
-    const job = await db_1.prisma.job.create({
+    const job = await db_1.default.job.create({
         data: {
             id: String(Date.now()),
             title: data.title,
@@ -124,12 +127,12 @@ async function createJob(data) {
 }
 async function updateJob(id, data) {
     if (data.companyId !== undefined) {
-        const company = await db_1.prisma.company.findUnique({ where: { id: data.companyId } });
+        const company = await db_1.default.company.findUnique({ where: { id: data.companyId } });
         if (!company)
             return null;
     }
     try {
-        const job = await db_1.prisma.job.update({
+        const job = await db_1.default.job.update({
             where: { id },
             data: {
                 ...(data.title && { title: data.title }),
@@ -152,7 +155,7 @@ async function updateJob(id, data) {
 }
 async function deleteJob(id) {
     try {
-        await db_1.prisma.job.delete({ where: { id } });
+        await db_1.default.job.delete({ where: { id } });
         return true;
     }
     catch (e) {
@@ -163,7 +166,7 @@ async function deleteJob(id) {
 }
 // --- Companies ---
 async function getCompaniesList(city) {
-    const list = await db_1.prisma.company.findMany({
+    const list = await db_1.default.company.findMany({
         where: city ? { location: city } : undefined,
         include: { jobs: { select: { id: true } } },
     });
@@ -178,7 +181,7 @@ async function getCompaniesList(city) {
     }));
 }
 async function getCompanyById(id) {
-    const company = await db_1.prisma.company.findUnique({
+    const company = await db_1.default.company.findUnique({
         where: { id },
         include: { jobs: { select: { id: true } } },
     });
@@ -195,14 +198,14 @@ async function getCompanyById(id) {
     };
 }
 async function createCompany(data) {
-    const c = await db_1.prisma.company.create({
+    const c = await db_1.default.company.create({
         data: { id: "company-" + Date.now(), ...data },
     });
     return { ...c, logo: c.logo ?? undefined, jobs: [] };
 }
 async function updateCompany(id, data) {
     try {
-        const c = await db_1.prisma.company.update({
+        const c = await db_1.default.company.update({
             where: { id },
             data: {
                 ...(data.name !== undefined && { name: data.name }),
@@ -223,7 +226,7 @@ async function updateCompany(id, data) {
 }
 async function deleteCompany(id) {
     try {
-        await db_1.prisma.company.delete({ where: { id } });
+        await db_1.default.company.delete({ where: { id } });
         return true;
     }
     catch (e) {
@@ -234,32 +237,32 @@ async function deleteCompany(id) {
 }
 // --- Users ---
 async function getUsersList() {
-    return db_1.prisma.user.findMany();
+    return db_1.default.user.findMany();
 }
 async function getUserById(id) {
-    return db_1.prisma.user.findUnique({ where: { id } });
+    return db_1.default.user.findUnique({ where: { id } });
 }
 /**
  * Devuelve el perfil de un candidato para una empresa, pero SOLO si
  * ese candidato se postuló a un empleo de esa empresa.
  */
 async function getCandidateForCompany(filters) {
-    const canAccess = await db_1.prisma.application.findFirst({
+    const canAccess = await db_1.default.application.findFirst({
         where: { userId: filters.userId, job: { companyId: filters.companyId } },
         select: { id: true },
     });
     if (!canAccess)
         return null;
-    return db_1.prisma.user.findUnique({ where: { id: filters.userId } });
+    return db_1.default.user.findUnique({ where: { id: filters.userId } });
 }
 async function createUser(data) {
-    return db_1.prisma.user.create({
+    return db_1.default.user.create({
         data: { id: "user-" + Date.now(), ...data },
     });
 }
 async function updateUser(id, data) {
     try {
-        return await db_1.prisma.user.update({
+        return await db_1.default.user.update({
             where: { id },
             data: {
                 ...(data.name !== undefined && { name: data.name }),
@@ -278,7 +281,7 @@ async function updateUser(id, data) {
 }
 async function updateUserPassword(id, passwordHash) {
     try {
-        await db_1.prisma.user.update({
+        await db_1.default.user.update({
             where: { id },
             data: { passwordHash },
         });
@@ -292,7 +295,7 @@ async function updateUserPassword(id, passwordHash) {
 }
 async function deleteUser(id) {
     try {
-        await db_1.prisma.user.delete({ where: { id } });
+        await db_1.default.user.delete({ where: { id } });
         return true;
     }
     catch (e) {
@@ -308,7 +311,7 @@ async function getApplicationsList(filters) {
         where.jobId = filters.jobId;
     if (filters.userId)
         where.userId = filters.userId;
-    const list = await db_1.prisma.application.findMany({
+    const list = await db_1.default.application.findMany({
         where: Object.keys(where).length ? where : undefined,
         include: { user: { select: { name: true, email: true, avatar: true } } },
         orderBy: { appliedAt: "desc" },
@@ -327,7 +330,7 @@ async function getApplicationsList(filters) {
     }));
 }
 async function createApplication(data) {
-    const a = await db_1.prisma.application.create({
+    const a = await db_1.default.application.create({
         data: { id: "app-" + Date.now(), ...data },
         include: { user: { select: { name: true, email: true, avatar: true } } },
     });
@@ -348,7 +351,7 @@ async function getApplicationsForCompany(filters) {
     const where = { job: { companyId: filters.companyId } };
     if (filters.jobId)
         where.jobId = filters.jobId;
-    const list = await db_1.prisma.application.findMany({
+    const list = await db_1.default.application.findMany({
         where,
         include: { user: { select: { name: true, email: true, avatar: true } } },
         orderBy: { appliedAt: "desc" },

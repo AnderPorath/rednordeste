@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { prisma } from "../db";
+import prisma from "../db";
 import { signAdminToken, signCompanyToken, signUserToken } from "../middleware/auth";
 
 const loginSchema = z.object({

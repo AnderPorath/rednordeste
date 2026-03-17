@@ -5,7 +5,7 @@ import path from "path";
 import * as data from "../data";
 import { requireUser, AuthRequest } from "../middleware/auth";
 import { uploadAvatar, uploadCv } from "../upload";
-import { prisma } from "../db";
+import prisma from "../db";
 
 const userSchema = z.object({
   name: z.string().min(1),

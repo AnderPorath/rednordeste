@@ -7,7 +7,7 @@ exports.authRouter = void 0;
 const express_1 = require("express");
 const zod_1 = require("zod");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const db_1 = require("../db");
+const db_1 = __importDefault(require("../db"));
 const auth_1 = require("../middleware/auth");
 const loginSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
@@ -26,7 +26,7 @@ exports.authRouter.post("/login", async (req, res) => {
         const { email, password } = parseResult.data;
         const emailNorm = normalizedEmail(email);
         // 1) Admin
-        const admin = await db_1.prisma.admin.findUnique({
+        const admin = await db_1.default.admin.findUnique({
             where: { email: emailNorm },
         });
         if (admin) {
@@ -47,7 +47,7 @@ exports.authRouter.post("/login", async (req, res) => {
             return res.status(401).json({ error: "Email o contraseña incorrectos" });
         }
         // 2) Empresa (email único)
-        const company = await db_1.prisma.company.findUnique({
+        const company = await db_1.default.company.findUnique({
             where: { email: emailNorm },
         });
         if (company?.passwordHash) {
@@ -70,7 +70,7 @@ exports.authRouter.post("/login", async (req, res) => {
             return res.status(401).json({ error: "Email o contraseña incorrectos" });
         }
         // 3) Candidato (User)
-        const user = await db_1.prisma.user.findUnique({
+        const user = await db_1.default.user.findUnique({
             where: { email: emailNorm },
         });
         if (user?.passwordHash) {

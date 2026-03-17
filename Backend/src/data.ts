@@ -2,7 +2,7 @@
  * Capa de datos: PostgreSQL vía Prisma (DATABASE_URL).
  */
 
-import { prisma } from "./db";
+import prisma from "./db";
 
 function requirementsToArray(r: unknown): string[] {
   if (Array.isArray(r)) return r as string[];

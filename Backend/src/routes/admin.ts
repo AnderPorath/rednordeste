@@ -3,7 +3,7 @@ import fs from "fs";
 import { Router, Response } from "express";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { prisma } from "../db";
+import prisma from "../db";
 import { requireAdmin, type AuthRequest } from "../middleware/auth";
 import { uploadAvatar } from "../upload";
 import * as data from "../data";

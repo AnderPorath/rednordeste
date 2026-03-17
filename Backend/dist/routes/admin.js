@@ -42,7 +42,7 @@ const fs_1 = __importDefault(require("fs"));
 const express_1 = require("express");
 const zod_1 = require("zod");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const db_1 = require("../db");
+const db_1 = __importDefault(require("../db"));
 const auth_1 = require("../middleware/auth");
 const upload_1 = require("../upload");
 const data = __importStar(require("../data"));
@@ -63,7 +63,7 @@ const changePasswordSchema = zod_1.z.object({
 // --- Perfil del admin (foto, nombre, cambiar contraseña) ---
 exports.adminRouter.get("/me", async (req, res) => {
     try {
-        const admin = await db_1.prisma.admin.findUnique({
+        const admin = await db_1.default.admin.findUnique({
             where: { id: req.admin.adminId },
             select: { id: true, email: true, name: true, avatar: true, createdAt: true },
         });
@@ -91,7 +91,7 @@ async function handleUpdateProfile(req, res) {
             data.name = parseResult.data.name;
         if (parseResult.data.avatar !== undefined)
             data.avatar = parseResult.data.avatar;
-        const admin = await db_1.prisma.admin.update({
+        const admin = await db_1.default.admin.update({
             where: { id: req.admin.adminId },
             data,
             select: { id: true, email: true, name: true, avatar: true },
@@ -124,7 +124,7 @@ async function handleUpdateProfileWithFile(req, res) {
         if (avatarPath !== undefined)
             data.avatar = avatarPath;
         if (Object.keys(data).length === 0) {
-            const current = await db_1.prisma.admin.findUnique({
+            const current = await db_1.default.admin.findUnique({
                 where: { id: req.admin.adminId },
                 select: { id: true, email: true, name: true, avatar: true },
             });
@@ -132,7 +132,7 @@ async function handleUpdateProfileWithFile(req, res) {
                 return res.status(404).json({ error: "Admin no encontrado" });
             return res.json({ ...current, avatar: current.avatar ?? undefined });
         }
-        const admin = await db_1.prisma.admin.update({
+        const admin = await db_1.default.admin.update({
             where: { id: req.admin.adminId },
             data,
             select: { id: true, email: true, name: true, avatar: true },
@@ -174,7 +174,7 @@ exports.adminRouter.post("/me/avatar", (req, res, next) => {
             return res.status(400).json({ error: "No se envió ninguna imagen" });
         }
         const avatarPath = `/uploads/avatars/${req.file.filename}`;
-        const admin = await db_1.prisma.admin.update({
+        const admin = await db_1.default.admin.update({
             where: { id: req.admin.adminId },
             data: { avatar: avatarPath },
             select: { id: true, email: true, name: true, avatar: true },
@@ -193,7 +193,7 @@ exports.adminRouter.post("/me/change-password", async (req, res) => {
             return res.status(400).json({ error: parseResult.error.flatten() });
         }
         const { currentPassword, newPassword } = parseResult.data;
-        const admin = await db_1.prisma.admin.findUnique({
+        const admin = await db_1.default.admin.findUnique({
             where: { id: req.admin.adminId },
         });
         if (!admin)
@@ -203,7 +203,7 @@ exports.adminRouter.post("/me/change-password", async (req, res) => {
             return res.status(401).json({ error: "Contraseña actual incorrecta" });
         }
         const passwordHash = await bcryptjs_1.default.hash(newPassword, 10);
-        await db_1.prisma.admin.update({
+        await db_1.default.admin.update({
             where: { id: admin.id },
             data: { passwordHash },
         });
