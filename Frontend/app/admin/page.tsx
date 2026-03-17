@@ -47,12 +47,16 @@ import {
   adminFetchUsers,
   adminFetchCompanies,
   adminFetchJobs,
+  adminFetchAdmins,
   adminUpdateUser,
   adminUpdateCompany,
   adminUpdateJob,
   adminDeleteUser,
   adminDeleteCompany,
   adminDeleteJob,
+  adminCreateAdmin,
+  adminUpdateAdmin,
+  adminDeleteAdmin,
   type AdminUser,
   type AdminCompany,
   type AdminJob,
@@ -78,6 +82,9 @@ export default function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [companies, setCompanies] = useState<AdminCompany[]>([]);
   const [jobs, setJobs] = useState<AdminJob[]>([]);
+  const [admins, setAdmins] = useState<
+    Array<{ id: string; email: string; name: string; avatar?: string | null; createdAt: string }>
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profileLoadError, setProfileLoadError] = useState<string | null>(null);
@@ -85,6 +92,7 @@ export default function AdminPage() {
   const [editUser, setEditUser] = useState<AdminUser | null>(null);
   const [editCompany, setEditCompany] = useState<AdminCompany | null>(null);
   const [editJob, setEditJob] = useState<AdminJob | null>(null);
+  const [editAdmin, setEditAdmin] = useState<any>(null);
 
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
@@ -96,15 +104,18 @@ export default function AdminPage() {
   const [createUserOpen, setCreateUserOpen] = useState(false);
   const [createCompanyOpen, setCreateCompanyOpen] = useState(false);
   const [createJobOpen, setCreateJobOpen] = useState(false);
+  const [createAdminOpen, setCreateAdminOpen] = useState(false);
   const [createSaving, setCreateSaving] = useState(false);
+  const [createAdminSaving, setCreateAdminSaving] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [createAdminError, setCreateAdminError] = useState<string | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const avatarFileRef = useRef<File | null>(null);
 
-  const [activeTab, setActiveTab] = useState<"users" | "companies" | "jobs">("users");
+  const [activeTab, setActiveTab] = useState<"users" | "companies" | "jobs" | "admins">("users");
 
   const [deleteTarget, setDeleteTarget] = useState<
-    { type: "user" | "company" | "job"; id: string; name: string } | null
+    { type: "user" | "company" | "job" | "admin"; id: string; name: string } | null
   >(null);
   const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -120,9 +131,11 @@ export default function AdminPage() {
         adminFetchCompanies(token),
         adminFetchJobs(token),
       ]);
+      const a = await (async () => adminFetchAdmins(token))();
       setUsers(u);
       setCompanies(c);
       setJobs(j);
+      setAdmins(a);
       try {
         const me = await adminGetMe(token);
         updateAdmin({ name: me.name, avatar: me.avatar });
@@ -383,6 +396,58 @@ export default function AdminPage() {
     }
   };
 
+  const handleCreateAdmin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setCreateAdminError(null);
+    const form = e.currentTarget;
+    const name = (form.querySelector('[name="new-admin-name"]') as HTMLInputElement)?.value?.trim();
+    const email = (form.querySelector('[name="new-admin-email"]') as HTMLInputElement)?.value?.trim();
+    const password = (form.querySelector('[name="new-admin-password"]') as HTMLInputElement)?.value;
+    const avatar = (form.querySelector('[name="new-admin-avatar"]') as HTMLInputElement)?.value?.trim() || undefined;
+    if (!name || !email || !password) return;
+    setCreateAdminSaving(true);
+    try {
+      const created = await adminCreateAdmin(token as string, {
+        name,
+        email,
+        password,
+        avatar: avatar ? avatar : null,
+      });
+      setAdmins((prev) => [...prev, created]);
+      setCreateAdminOpen(false);
+      form.reset();
+    } catch (err) {
+      setCreateAdminError(err instanceof Error ? err.message : "Error al crear admin");
+    } finally {
+      setCreateAdminSaving(false);
+    }
+  };
+
+  const handleSaveAdmin = async (e: React.FormEvent<HTMLFormElement>) => {
+    if (!token || !editAdmin) return;
+    e.preventDefault();
+    const form = e.currentTarget;
+    const name = (form.querySelector('[name="admin-name"]') as HTMLInputElement)?.value?.trim();
+    const email = (form.querySelector('[name="admin-email"]') as HTMLInputElement)?.value?.trim();
+    const password = (form.querySelector('[name="admin-password"]') as HTMLInputElement)?.value;
+    const avatar = (form.querySelector('[name="admin-avatar"]') as HTMLInputElement)?.value?.trim() || undefined;
+    setSaving(true);
+    try {
+      const updated = await adminUpdateAdmin(token, editAdmin.id, {
+        name: name ?? editAdmin.name,
+        email: email ?? editAdmin.email,
+        password: password ? password : undefined,
+        avatar: avatar ? avatar : null,
+      } as any);
+      setAdmins((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
+      setEditAdmin(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al guardar admin");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const initials = admin?.name
     ?.split(" ")
     .map((n) => n[0])
@@ -527,9 +592,9 @@ export default function AdminPage() {
           </Card>
         ) : (
           <Card className="border-2">
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "users" | "companies" | "jobs")} className="w-full">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "users" | "companies" | "jobs" | "admins")} className="w-full">
               <CardHeader className="pb-2">
-                <TabsList className="grid w-full grid-cols-3 max-w-md bg-transparent p-0 h-auto gap-3 mx-auto justify-items-center">
+                <TabsList className="grid w-full grid-cols-4 max-w-lg bg-transparent p-0 h-auto gap-3 mx-auto justify-items-center">
                   <TabsTrigger
                     value="users"
                     className={`gap-2 border-0 rounded-xl py-3 px-4 text-sm font-medium transition-all duration-200 ${
@@ -565,6 +630,18 @@ export default function AdminPage() {
                     <Briefcase className="h-4 w-4 shrink-0" />
                     Vacantes
                     <Badge variant="secondary" className="ml-1 font-normal">{jobs.length}</Badge>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="admins"
+                    className={`gap-2 border-0 rounded-xl py-3 px-4 text-sm font-medium transition-all duration-200 ${
+                      activeTab === "admins"
+                        ? "bg-primary/10 text-primary shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-primary/20"
+                        : "bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground rounded-xl"
+                    }`}
+                  >
+                    <Shield className="h-4 w-4 shrink-0" />
+                    Admins
+                    <Badge variant="secondary" className="ml-1 font-normal">{admins.length}</Badge>
                   </TabsTrigger>
                 </TabsList>
               </CardHeader>
@@ -707,6 +784,59 @@ export default function AdminPage() {
                                   className="text-destructive hover:text-destructive"
                                   onClick={() =>
                                     setDeleteTarget({ type: "job", id: j.id, name: j.title })
+                                  }
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+                </TabsContent>
+                <TabsContent value="admins" className="mt-0">
+                  <div className="flex justify-end mb-4">
+                    <Button
+                      onClick={() => {
+                        setCreateError(null);
+                        setEditAdmin(null);
+                        setCreateAdminOpen(true);
+                      }}
+                      className="gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Crear admin
+                    </Button>
+                  </div>
+                  {admins.length === 0 ? (
+                    <p className="text-muted-foreground py-8 text-center">No hay admins.</p>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Nombre</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead className="w-[120px]">Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {admins.map((a) => (
+                          <TableRow key={a.id}>
+                            <TableCell className="font-medium">{a.name}</TableCell>
+                            <TableCell>{a.email}</TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                <Button variant="outline" size="icon" onClick={() => setEditAdmin(a)}>
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="text-destructive hover:text-destructive"
+                                  onClick={() =>
+                                    setDeleteTarget({ type: "admin", id: a.id, name: a.name })
                                   }
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -1018,6 +1148,79 @@ export default function AdminPage() {
       </Dialog>
 
       <EditJobDialog job={editJob} companies={companies} onClose={() => setEditJob(null)} onSave={handleSaveJob} saving={saving} />
+
+      {/* Create Admin Dialog */}
+      <Dialog open={createAdminOpen} onOpenChange={(open) => !open && setCreateAdminOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Crear admin</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreateAdmin} className="space-y-4">
+            {createAdminError && <p className="text-sm text-destructive">{createAdminError}</p>}
+            <div>
+              <Label>Nombre</Label>
+              <Input name="new-admin-name" placeholder="Nombre del admin" required />
+            </div>
+            <div>
+              <Label>Email</Label>
+              <Input name="new-admin-email" type="email" placeholder="admin@email.com" required />
+            </div>
+            <div>
+              <Label>Contraseña</Label>
+              <Input name="new-admin-password" type="password" placeholder="••••••••" required minLength={6} />
+            </div>
+            <div>
+              <Label>Avatar (URL, opcional)</Label>
+              <Input name="new-admin-avatar" placeholder="https://..." />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setCreateAdminOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={createAdminSaving}>
+                {createAdminSaving ? "Creando..." : "Crear admin"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Admin Dialog */}
+      <Dialog open={!!editAdmin} onOpenChange={(open) => !open && setEditAdmin(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar admin</DialogTitle>
+          </DialogHeader>
+          {editAdmin && (
+            <form onSubmit={handleSaveAdmin} className="space-y-4">
+              <div>
+                <Label>Nombre</Label>
+                <Input name="admin-name" defaultValue={editAdmin.name} required />
+              </div>
+              <div>
+                <Label>Email</Label>
+                <Input name="admin-email" type="email" defaultValue={editAdmin.email} required />
+              </div>
+              <div>
+                <Label>Avatar (URL, opcional)</Label>
+                <Input name="admin-avatar" defaultValue={editAdmin.avatar ?? ""} placeholder="https://..." />
+              </div>
+              <div>
+                <Label>Contraseña nueva (opcional)</Label>
+                <Input name="admin-password" type="password" placeholder="••••••••" minLength={6} />
+              </div>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setEditAdmin(null)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={saving}>
+                  {saving ? "Guardando..." : "Guardar"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>

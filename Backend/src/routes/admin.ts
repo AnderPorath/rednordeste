@@ -206,6 +206,20 @@ const jobUpdateSchema = z.object({
   companyId: z.string().optional(),
 });
 
+const adminCreateSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  name: z.string().min(1),
+  avatar: z.string().url().optional().nullable(),
+});
+
+const adminUpdateSchema = z.object({
+  email: z.string().email().optional(),
+  name: z.string().min(1).optional(),
+  avatar: z.string().url().optional().nullable(),
+  password: z.string().min(6).optional(),
+});
+
 // --- Usuarios (candidatos) ---
 adminRouter.get("/users", async (_req: AuthRequest, res: Response) => {
   try {
@@ -327,6 +341,65 @@ adminRouter.delete("/jobs/:id", async (req: AuthRequest, res: Response) => {
   try {
     const deleted = await data.deleteJob(req.params.id);
     if (!deleted) return res.status(404).json({ error: "Vacante no encontrada" });
+    res.status(204).send();
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// --- Admins ---
+adminRouter.get("/admins", async (_req: AuthRequest, res: Response) => {
+  try {
+    const list = await data.getAdminsList();
+    res.json(list);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+adminRouter.post("/admins", async (req: AuthRequest, res: Response) => {
+  try {
+    const parsed = adminCreateSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+    const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+    const created = await data.createAdmin({
+      email: parsed.data.email,
+      passwordHash,
+      name: parsed.data.name,
+      avatar: parsed.data.avatar ?? null,
+    });
+    res.status(201).json(created);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+adminRouter.put("/admins/:id", async (req: AuthRequest, res: Response) => {
+  try {
+    const parsed = adminUpdateSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+    const d = parsed.data;
+    const passwordHash = d.password ? await bcrypt.hash(d.password, 10) : undefined;
+    const updated = await data.updateAdmin(req.params.id, {
+      name: d.name,
+      avatar: d.avatar ?? undefined,
+      passwordHash: passwordHash ?? undefined,
+    } as any);
+    if (!updated) return res.status(404).json({ error: "Admin no encontrado" });
+    res.json(updated);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+adminRouter.delete("/admins/:id", async (req: AuthRequest, res: Response) => {
+  try {
+    const deleted = await data.deleteAdmin(req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Admin no encontrado" });
     res.status(204).send();
   } catch (e) {
     console.error(e);

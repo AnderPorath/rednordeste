@@ -253,3 +253,65 @@ export async function adminDeleteJob(token: string, id: string): Promise<void> {
     throw new Error(err?.error ?? "Error al eliminar vacante");
   }
 }
+
+// --- Admins CRUD (otros admins) ---
+export interface AdminOtherAdmin {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string | null;
+  createdAt: string;
+}
+
+export async function adminFetchAdmins(token: string): Promise<AdminOtherAdmin[]> {
+  const res = await fetch(`${API_BASE_URL}/admin/admins`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error("Error al cargar admins");
+  return res.json();
+}
+
+export async function adminCreateAdmin(
+  token: string,
+  data: { name: string; email: string; password: string; avatar?: string | null }
+): Promise<AdminOtherAdmin> {
+  const res = await fetch(`${API_BASE_URL}/admin/admins`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error ?? "Error al crear admin");
+  }
+  return res.json();
+}
+
+export async function adminUpdateAdmin(
+  token: string,
+  id: string,
+  data: { name?: string; email?: string; password?: string; avatar?: string | null }
+): Promise<AdminOtherAdmin> {
+  const res = await fetch(`${API_BASE_URL}/admin/admins/${id}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error ?? "Error al actualizar admin");
+  }
+  return res.json();
+}
+
+export async function adminDeleteAdmin(token: string, id: string): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/admin/admins/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error ?? "Error al eliminar admin");
+  }
+}

@@ -56,6 +56,75 @@ export type ApplicationResponse = {
   appliedAt: string;
 };
 
+// --- Admins ---
+export type AdminResponse = {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string | null;
+  createdAt: string;
+};
+
+export async function getAdminsList(): Promise<AdminResponse[]> {
+  const list = await prisma.admin.findMany({
+    orderBy: { createdAt: "desc" },
+    select: { id: true, email: true, name: true, avatar: true, createdAt: true },
+  });
+  return list.map((a) => ({ ...a, createdAt: a.createdAt.toISOString() }));
+}
+
+export async function createAdmin(data: {
+  email: string;
+  passwordHash: string;
+  name: string;
+  avatar?: string | null;
+}): Promise<AdminResponse> {
+  const a = await prisma.admin.create({
+    data: {
+      id: "admin-" + Date.now(),
+      email: data.email,
+      passwordHash: data.passwordHash,
+      name: data.name,
+      avatar: data.avatar ?? null,
+    },
+    select: { id: true, email: true, name: true, avatar: true, createdAt: true },
+  });
+  return { ...a, createdAt: a.createdAt.toISOString() };
+}
+
+export async function updateAdmin(
+  id: string,
+  data: Partial<{ name: string; avatar?: string | null; passwordHash: string | null }>
+): Promise<AdminResponse | null> {
+  try {
+    const a = await prisma.admin.update({
+      where: { id },
+      data: {
+        ...(data.name !== undefined ? { name: data.name } : {}),
+        ...(data.avatar !== undefined ? { avatar: data.avatar } : {}),
+        ...(data.passwordHash !== undefined && data.passwordHash !== null
+          ? { passwordHash: data.passwordHash }
+          : {}),
+      },
+      select: { id: true, email: true, name: true, avatar: true, createdAt: true },
+    });
+    return { ...a, createdAt: a.createdAt.toISOString() };
+  } catch (e: unknown) {
+    if (e && typeof e === "object" && "code" in e && (e as any).code === "P2025") return null;
+    throw e;
+  }
+}
+
+export async function deleteAdmin(id: string): Promise<boolean> {
+  try {
+    await prisma.admin.delete({ where: { id } });
+    return true;
+  } catch (e: unknown) {
+    if (e && typeof e === "object" && "code" in e && (e as any).code === "P2025") return false;
+    throw e;
+  }
+}
+
 function jobToResponse(j: { id: string; title: string; city: string; salary: string; type: string; description: string; requirements: unknown; postedAt: Date; company: { name: string; logo?: string | null } }): JobResponse {
   return {
     id: j.id,
