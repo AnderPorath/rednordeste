@@ -14,6 +14,7 @@ adminRouter.use(requireAdmin);
 const profileUpdateSchema = z.object({
   name: z.string().min(1).optional(),
   avatar: z
+    .string()
     .optional()
     .nullable()
     .transform((val) => (val === "" ? null : val)),
@@ -222,7 +223,12 @@ adminRouter.put("/users/:id", async (req: AuthRequest, res: Response) => {
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.flatten() });
     }
-    const user = await data.updateUser(req.params.id, parseResult.data);
+    const d = parseResult.data;
+    const user = await data.updateUser(req.params.id, {
+      ...d,
+      avatar: d.avatar ?? undefined,
+      cvUrl: d.cvUrl ?? undefined,
+    });
     if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
     res.json(user);
   } catch (e) {
@@ -260,7 +266,11 @@ adminRouter.put("/companies/:id", async (req: AuthRequest, res: Response) => {
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.flatten() });
     }
-    const company = await data.updateCompany(req.params.id, parseResult.data);
+    const d = parseResult.data;
+    const company = await data.updateCompany(req.params.id, {
+      ...d,
+      logo: d.logo ?? undefined,
+    });
     if (!company) return res.status(404).json({ error: "Empresa no encontrada" });
     res.json(company);
   } catch (e) {

@@ -79,20 +79,20 @@ jobsRouter.patch("/:id", async (req: Request, res: Response) => {
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.flatten() });
     }
-    const payload = parseResult.data as Record<string, unknown>;
+    const payload = parseResult.data;
     if (payload.companyId !== undefined) {
-      const company = await data.getCompanyById(payload.companyId as string);
+      const company = await data.getCompanyById(payload.companyId);
       if (!company) return res.status(400).json({ error: "Company not found" });
     }
-    const job = await data.updateJob(req.params.id, {
-      ...(payload.title && { title: payload.title as string }),
-      ...(payload.companyId && { companyId: payload.companyId as string }),
-      ...(payload.city && { city: payload.city as string }),
-      ...(payload.salary && { salary: payload.salary as string }),
-      ...(payload.type && { type: payload.type as string }),
-      ...(payload.description && { description: payload.description as string }),
-      ...(payload.requirements && { requirements: payload.requirements as string[] }),
-    });
+    const updateData: Parameters<typeof data.updateJob>[1] = {};
+    if (payload.title !== undefined) updateData.title = payload.title;
+    if (payload.companyId !== undefined) updateData.companyId = payload.companyId;
+    if (payload.city !== undefined) updateData.city = payload.city;
+    if (payload.salary !== undefined) updateData.salary = payload.salary;
+    if (payload.type !== undefined) updateData.type = payload.type;
+    if (payload.description !== undefined) updateData.description = payload.description;
+    if (payload.requirements !== undefined) updateData.requirements = payload.requirements;
+    const job = await data.updateJob(req.params.id, updateData);
     if (!job) {
       return res.status(404).json({ error: "Job not found" });
     }
