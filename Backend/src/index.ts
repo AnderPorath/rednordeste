@@ -13,7 +13,7 @@ import { authRouter } from "./routes/auth";
 import { adminRouter } from "./routes/admin";
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 app.use(helmet());
 // En producción permite el dominio del front (ej. https://tudominio.com). En desarrollo "*".
@@ -31,21 +31,26 @@ app.use((req, res, next) => {
   next();
 });
 
+// Ruta de prueba en la raíz
 app.get("/", (_req, res) => {
-  res.send("Backend funcionando 🚀");
+  res.send("Backend funcionando");
 });
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use("/jobs", jobsRouter);
-app.use("/companies", companiesRouter);
-app.use("/applications", applicationsRouter);
-app.use("/users", usersRouter);
-app.use("/auth", authRouter);
-app.use("/admin", adminRouter);
-// Misma base que upload.ts para servir los avatares
+// Todas las rutas de la API bajo el prefijo /api
+const apiRouter = express.Router();
+apiRouter.use("/jobs", jobsRouter);
+apiRouter.use("/companies", companiesRouter);
+apiRouter.use("/applications", applicationsRouter);
+apiRouter.use("/users", usersRouter);
+apiRouter.use("/auth", authRouter);
+apiRouter.use("/admin", adminRouter);
+app.use("/api", apiRouter);
+
+// Misma base que upload.ts para servir los avatares (sin /api para no romper URLs guardadas en DB)
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
