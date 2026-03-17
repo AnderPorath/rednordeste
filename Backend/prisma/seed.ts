@@ -1,17 +1,11 @@
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { prisma } from "../src/db";
 import bcrypt from "bcryptjs";
-
-const url = process.env.DATABASE_URL || "file:./prisma/red_nordeste.db";
-const adapter = new PrismaBetterSqlite3({ url });
-const prisma = new PrismaClient({ adapter });
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@rednordeste.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Admin123!";
 
 async function main() {
-  // Borrar en orden por dependencias (FK)
   await prisma.application.deleteMany({});
   await prisma.job.deleteMany({});
   await prisma.company.deleteMany({});

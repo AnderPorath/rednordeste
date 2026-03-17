@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-// SQLite por defecto (archivo local, sin instalar nada). Podés cambiar con DATABASE_URL.
-const url = process.env.DATABASE_URL || "file:./prisma/red_nordeste.db";
+// DATABASE_URL obligatorio en runtime (app y seed). Para solo prisma generate se usa placeholder.
+const url = process.env.DATABASE_URL || "postgresql://localhost:5432/placeholder";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

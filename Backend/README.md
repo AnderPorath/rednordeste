@@ -1,10 +1,12 @@
 # Backend – Red Nordeste
 
-API Express + TypeScript. **Base de datos SQLite (archivo local). No hace falta instalar PostgreSQL.**
+API Express + TypeScript. **Base de datos PostgreSQL** (DATABASE_URL en .env; en Render se usa la BD del servicio).
 
-## Arrancar (sin instalar nada)
+## Arrancar
 
-1. En la carpeta `Backend`:
+1. Definir `DATABASE_URL` en `.env` (PostgreSQL).
+
+2. En la carpeta `Backend`:
 
    ```bash
    npm install
@@ -13,9 +15,7 @@ API Express + TypeScript. **Base de datos SQLite (archivo local). No hace falta 
    npm run dev
    ```
 
-2. La API queda en `http://localhost:4000`. La base de datos es el archivo `prisma/red_nordeste.db` (empleos, empresas y usuarios de ejemplo ya cargados).
-
-En consola verás: **Data: SQLite (archivo local, sin instalar PostgreSQL)**.
+3. La API queda en `http://localhost:4000`.
 
 ## Scripts
 

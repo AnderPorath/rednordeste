@@ -1,6 +1,6 @@
 "use strict";
 /**
- * Capa de datos: SQLite (archivo local, sin instalar PostgreSQL).
+ * Capa de datos: PostgreSQL vía Prisma (DATABASE_URL).
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getJobsList = getJobsList;

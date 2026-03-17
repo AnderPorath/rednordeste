@@ -1,5 +1,5 @@
 /**
- * Capa de datos: SQLite (archivo local, sin instalar PostgreSQL).
+ * Capa de datos: PostgreSQL vía Prisma (DATABASE_URL).
  */
 
 import { prisma } from "./db";

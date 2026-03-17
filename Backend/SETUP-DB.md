@@ -1,10 +1,12 @@
-# Base de datos – sin instalar nada
+# Base de datos – PostgreSQL
 
-Este proyecto usa **SQLite**: un archivo en tu carpeta. No hace falta instalar PostgreSQL ni crear cuentas en la nube.
+Este proyecto usa **PostgreSQL**. En local necesitás una instancia (Docker, Neon, Supabase, etc.). En producción (Render) usá la base que te asigna Render.
 
 ## Pasos
 
-1. En la carpeta `Backend`:
+1. Definir `DATABASE_URL` en `.env` (ej. `postgresql://user:password@host:5432/database?sslmode=require`).
+
+2. En la carpeta `Backend`:
    ```bash
    npm install
    npx prisma migrate deploy
@@ -12,11 +14,9 @@ Este proyecto usa **SQLite**: un archivo en tu carpeta. No hace falta instalar P
    npm run dev
    ```
 
-2. Listo. La base de datos es el archivo `Backend/prisma/red_nordeste.db`. Los empleos, empresas y usuarios de ejemplo ya están cargados.
-
-En la consola verás: **Data: SQLite (archivo local, sin instalar PostgreSQL)**.
+3. En producción (Render) agregá la variable `DATABASE_URL` desde el panel de la base de datos.
 
 ## Opcional
 
-- Para ver o editar datos: `npm run db:studio` (abre Prisma Studio en el navegador).
-- Para cambiar la ruta del archivo: en `.env` definí `DATABASE_URL="file:./prisma/otro_nombre.db"` y volvé a ejecutar `npx prisma migrate deploy` y `npm run db:seed`.
+- Para ver o editar datos: `npm run db:studio`.
+- Para crear migraciones en desarrollo: `npx prisma migrate dev --name <nombre>`.
