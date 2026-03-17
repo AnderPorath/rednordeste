@@ -1,0 +1,25 @@
+---
+description: Reiniciar backend y frontend cuando sea necesario
+alwaysApply: true
+---
+
+# Reinicio de servidores
+
+Cuando hagas cambios que requieran recargar el servidor (backend o frontend), **reinicia tú mismo** los procesos:
+
+1. **Backend** (Node/Express en puerto 4000):
+   - Si hace falta liberar el puerto: `lsof -ti :4000 | xargs kill -9`
+   - Iniciar: desde `Backend/` ejecutar `npm run dev` (en segundo plano si corresponde)
+
+2. **Frontend** (Next.js en puerto 3000):
+   - Si hace falta liberar el puerto: `lsof -ti :3000 | xargs kill -9`
+   - Iniciar: desde `Frontend/` ejecutar `npm run dev` (en segundo plano si corresponde)
+
+Rutas típicas:
+- Backend: `cd "Backend" && npm run dev`
+- Frontend: `cd "Frontend" && npm run dev`
+
+Reinicia cuando:
+- Cambies variables de entorno (`.env`), código del backend o del frontend que ya esté en ejecución.
+- Haya errores de compilación o de servidor que sugieran que el proceso quedó en un estado inválido.
+- El usuario pida explícitamente reiniciar.
