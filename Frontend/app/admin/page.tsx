@@ -168,6 +168,9 @@ export default function AdminPage() {
       } else if (deleteTarget.type === "company") {
         await adminDeleteCompany(token, deleteTarget.id);
         setCompanies((prev) => prev.filter((x) => x.id !== deleteTarget.id));
+      } else if (deleteTarget.type === "admin") {
+        await adminDeleteAdmin(token, deleteTarget.id);
+        setAdmins((prev) => prev.filter((x) => x.id !== deleteTarget.id));
       } else {
         await adminDeleteJob(token, deleteTarget.id);
         setJobs((prev) => prev.filter((x) => x.id !== deleteTarget.id));
