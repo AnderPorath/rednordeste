@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cities } from "@/lib/data";
 import { Logo } from "@/components/logo";
 
 export function Footer() {
@@ -62,26 +63,16 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold">Ciudades</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/jobs?city=Encarnación" className="hover:text-foreground">
-                  Encarnación
-                </Link>
-              </li>
-              <li>
-                <Link href="/jobs?city=Hohenau" className="hover:text-foreground">
-                  Hohenau
-                </Link>
-              </li>
-              <li>
-                <Link href="/jobs?city=Obligado" className="hover:text-foreground">
-                  Obligado
-                </Link>
-              </li>
-              <li>
-                <Link href="/jobs?city=Trinidad" className="hover:text-foreground">
-                  Trinidad
-                </Link>
-              </li>
+              {cities.map((city) => (
+                <li key={city}>
+                  <Link
+                    href={`/jobs?city=${encodeURIComponent(city)}`}
+                    className="hover:text-foreground"
+                  >
+                    {city}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
