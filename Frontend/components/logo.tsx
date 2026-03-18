@@ -12,8 +12,8 @@ interface LogoProps {
 // Logo horizontal: proporción ~1024/538
 const sizes = {
   sm: { width: 95, height: 50 },
-  md: { width: 160, height: 85 },
-  lg: { width: 210, height: 110 },
+  md: { width: 190, height: 100 },
+  lg: { width: 260, height: 135 },
 };
 
 export function Logo({ href = "/", className = "", size = "lg" }: LogoProps) {
