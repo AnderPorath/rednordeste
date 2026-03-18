@@ -1,15 +1,14 @@
 // Cities in Itapúa, Paraguay
 export const cities = [
-  "Encarnación",
-  "Cambyretá",
-  "Capitán Miranda",
-  "Hohenau",
-  "Obligado",
-  "Bella Vista",
-  "San Juan del Paraná",
-  "Trinidad",
-  "Fram",
+  "Itapúa Poty",
+  "Capitán Meza",
+  "Edelira",
   "Natalio",
+  "Tomás Romero Pereira",
+  "Yatytay",
+  "San Rafael del Paraná",
+  "Carlos Antonio Lopez",
+  "Mayor Otaño",
 ] as const;
 
 export type City = (typeof cities)[number];
