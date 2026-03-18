@@ -63,7 +63,7 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold">Ciudades</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              {cities.map((city) => (
+              {cities.slice(0, 4).map((city) => (
                 <li key={city}>
                   <Link
                     href={`/jobs?city=${encodeURIComponent(city)}`}
