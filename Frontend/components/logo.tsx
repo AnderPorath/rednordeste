@@ -24,7 +24,7 @@ export function Logo({ href = "/", className = "", size = "lg" }: LogoProps) {
       alt="Red Nordeste - Tu trabajo en Itapúa"
       width={s.width}
       height={s.height}
-      className={`object-contain ${className}`}
+      className={`object-contain rounded-md ${className}`}
       priority
     />
   );
