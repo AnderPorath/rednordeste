@@ -51,16 +51,14 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" aria-label="Red Nordeste - Inicio" className="flex items-center">
-          <span className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-md">
-            <Image
-              src="/navbar-logo.png"
-              alt="Red Nordeste - Tu trabajo en Itapúa"
-              width={56}
-              height={56}
-              className="object-contain origin-center scale-[3.0] transform-gpu"
-              priority
-            />
-          </span>
+          <Image
+            src="/navbar-logo.png"
+            alt="Red Nordeste - Tu trabajo en Itapúa"
+            width={1000}
+            height={200}
+            className="h-14 w-auto object-contain"
+            priority
+          />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
