@@ -11,12 +11,12 @@ interface LogoProps {
 
 // Logo horizontal: proporción ~1024/538
 const sizes = {
-  sm: { width: 85, height: 45 },
-  md: { width: 115, height: 60 },
-  lg: { width: 145, height: 76 },
+  sm: { width: 95, height: 50 },
+  md: { width: 140, height: 75 },
+  lg: { width: 175, height: 92 },
 };
 
-export function Logo({ href = "/", className = "", size = "md" }: LogoProps) {
+export function Logo({ href = "/", className = "", size = "lg" }: LogoProps) {
   const s = sizes[size];
   const img = (
     <Image
