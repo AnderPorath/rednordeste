@@ -54,9 +54,9 @@ export function Navbar() {
           <Image
             src="/navbar-logo-v2.png"
             alt="Red Nordeste - Tu trabajo en Itapúa"
-            width={160}
-            height={160}
-            className="object-contain rounded-md"
+            width={56}
+            height={56}
+            className="object-cover rounded-md"
             priority
           />
         </Link>
