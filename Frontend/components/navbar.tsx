@@ -52,7 +52,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" aria-label="Red Nordeste - Inicio" className="flex items-center">
           <Image
-            src="/navbar-logo.png?v=5"
+            src="/navbar-logo.png?v=6"
             alt="Red Nordeste - Tu trabajo en Itapúa"
             width={160}
             height={160}
