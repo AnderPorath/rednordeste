@@ -13,7 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Menu, User, Building2, LogOut, Bookmark, PlusCircle, Shield } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { Logo } from "@/components/logo";
+import Image from "next/image";
 
 export function Navbar() {
   const { isLoggedIn, userType, logout, user, company, admin } = useAuth();
@@ -50,7 +50,16 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Logo href="/" size="md" />
+        <Link href="/" aria-label="Red Nordeste - Inicio" className="flex items-center">
+          <Image
+            src="/navbar-logo.png"
+            alt="Red Nordeste - Tu trabajo en Itapúa"
+            width={42}
+            height={42}
+            className="object-contain rounded-md"
+            priority
+          />
+        </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
           <Link

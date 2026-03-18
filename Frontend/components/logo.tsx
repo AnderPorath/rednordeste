@@ -11,20 +11,20 @@ interface LogoProps {
 
 // Logo horizontal: proporción ~1024/538
 const sizes = {
-  sm: { width: 95, height: 50 },
-  md: { width: 270, height: 140 },
-  lg: { width: 410, height: 210 },
+  sm: { width: 85, height: 45 },
+  md: { width: 115, height: 60 },
+  lg: { width: 145, height: 76 },
 };
 
-export function Logo({ href = "/", className = "", size = "lg" }: LogoProps) {
+export function Logo({ href = "/", className = "", size = "md" }: LogoProps) {
   const s = sizes[size];
   const img = (
     <Image
-      src="/logo.png?v=3"
+      src="/logo.png?v=2"
       alt="Red Nordeste - Tu trabajo en Itapúa"
       width={s.width}
       height={s.height}
-      className={`object-contain rounded-md ${className}`}
+      className={`object-contain ${className}`}
       priority
     />
   );
