@@ -406,7 +406,7 @@ export default function AdminPage() {
     const name = (form.querySelector('[name="new-admin-name"]') as HTMLInputElement)?.value?.trim();
     const email = (form.querySelector('[name="new-admin-email"]') as HTMLInputElement)?.value?.trim();
     const password = (form.querySelector('[name="new-admin-password"]') as HTMLInputElement)?.value;
-    const avatar = (form.querySelector('[name="new-admin-avatar"]') as HTMLInputElement)?.value?.trim() || undefined;
+    const avatarFile = (form.querySelector('input[name="new-admin-avatar"]') as HTMLInputElement)?.files?.[0] ?? null;
     if (!name || !email || !password) return;
     setCreateAdminSaving(true);
     try {
@@ -414,7 +414,7 @@ export default function AdminPage() {
         name,
         email,
         password,
-        avatar: avatar ? avatar : null,
+        avatarFile,
       });
       setAdmins((prev) => [...prev, created]);
       setCreateAdminOpen(false);
@@ -433,14 +433,14 @@ export default function AdminPage() {
     const name = (form.querySelector('[name="admin-name"]') as HTMLInputElement)?.value?.trim();
     const email = (form.querySelector('[name="admin-email"]') as HTMLInputElement)?.value?.trim();
     const password = (form.querySelector('[name="admin-password"]') as HTMLInputElement)?.value;
-    const avatar = (form.querySelector('[name="admin-avatar"]') as HTMLInputElement)?.value?.trim() || undefined;
+    const avatarFile = (form.querySelector('input[name="admin-avatar"]') as HTMLInputElement)?.files?.[0] ?? null;
     setSaving(true);
     try {
       const updated = await adminUpdateAdmin(token, editAdmin.id, {
         name: name ?? editAdmin.name,
         email: email ?? editAdmin.email,
         password: password ? password : undefined,
-        avatar: avatar ? avatar : null,
+        avatarFile,
       } as any);
       setAdmins((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
       setEditAdmin(null);
@@ -1173,8 +1173,8 @@ export default function AdminPage() {
               <Input name="new-admin-password" type="password" placeholder="••••••••" required minLength={6} />
             </div>
             <div>
-              <Label>Avatar (URL, opcional)</Label>
-              <Input name="new-admin-avatar" placeholder="https://..." />
+              <Label>Avatar (foto, opcional)</Label>
+              <Input name="new-admin-avatar" type="file" accept="image/*" />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setCreateAdminOpen(false)}>
@@ -1205,8 +1205,8 @@ export default function AdminPage() {
                 <Input name="admin-email" type="email" defaultValue={editAdmin.email} required />
               </div>
               <div>
-                <Label>Avatar (URL, opcional)</Label>
-                <Input name="admin-avatar" defaultValue={editAdmin.avatar ?? ""} placeholder="https://..." />
+                <Label>Avatar (foto, opcional)</Label>
+                <Input name="admin-avatar" type="file" accept="image/*" />
               </div>
               <div>
                 <Label>Contraseña nueva (opcional)</Label>

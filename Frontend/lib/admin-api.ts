@@ -274,12 +274,18 @@ export async function adminFetchAdmins(token: string): Promise<AdminOtherAdmin[]
 
 export async function adminCreateAdmin(
   token: string,
-  data: { name: string; email: string; password: string; avatar?: string | null }
+  data: { name: string; email: string; password: string; avatarFile?: File | null }
 ): Promise<AdminOtherAdmin> {
+  const form = new FormData();
+  form.append("name", data.name);
+  form.append("email", data.email);
+  form.append("password", data.password);
+  if (data.avatarFile) form.append("avatar", data.avatarFile, data.avatarFile.name);
+
   const res = await fetch(`${API_BASE_URL}/admin/admins`, {
     method: "POST",
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+    body: form,
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -291,12 +297,18 @@ export async function adminCreateAdmin(
 export async function adminUpdateAdmin(
   token: string,
   id: string,
-  data: { name?: string; email?: string; password?: string; avatar?: string | null }
+  data: { name?: string; email?: string; password?: string; avatarFile?: File | null }
 ): Promise<AdminOtherAdmin> {
+  const form = new FormData();
+  if (data.name !== undefined) form.append("name", data.name);
+  if (data.email !== undefined) form.append("email", data.email);
+  if (data.password !== undefined) form.append("password", data.password);
+  if (data.avatarFile) form.append("avatar", data.avatarFile, data.avatarFile.name);
+
   const res = await fetch(`${API_BASE_URL}/admin/admins/${id}`, {
     method: "PUT",
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+    body: form,
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
