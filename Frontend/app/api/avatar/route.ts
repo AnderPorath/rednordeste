@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
+// Si NEXT_PUBLIC_API_URL ya incluye "/api" (ej. ".../api"),
+// para este proxy necesitamos la raíz del backend (ej. "...").
+const API_BASE_CLEAN = API_BASE.replace(/\/api\/?$/, "");
+
 /**
  * Proxy para la foto de perfil del admin: evita problemas de CORS/origen
  * al cargar la imagen desde el mismo origen que el frontend.
@@ -14,7 +18,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "path inválido" }, { status: 400 });
   }
 
-  const url = `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+  const url = `${API_BASE_CLEAN}${path.startsWith("/") ? path : `/${path}`}`;
   try {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) {

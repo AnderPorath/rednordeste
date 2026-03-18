@@ -649,7 +649,7 @@ export default function AdminPage() {
                 </TabsList>
               </CardHeader>
               <CardContent>
-                <TabsContent value="users" className="mt-0">
+                <TabsContent value="users" className="mt-0 bg-transparent p-0">
                   <div className="flex justify-end mb-4">
                     <Button onClick={() => { setCreateError(null); setCreateUserOpen(true); }} className="gap-2">
                       <Plus className="h-4 w-4" />
@@ -695,7 +695,7 @@ export default function AdminPage() {
                     </Table>
                   )}
                 </TabsContent>
-                <TabsContent value="companies" className="mt-0">
+                <TabsContent value="companies" className="mt-0 bg-transparent p-0">
                   <div className="flex justify-end mb-4">
                     <Button onClick={() => { setCreateError(null); setCreateCompanyOpen(true); }} className="gap-2">
                       <Plus className="h-4 w-4" />
@@ -743,7 +743,7 @@ export default function AdminPage() {
                     </Table>
                   )}
                 </TabsContent>
-                <TabsContent value="jobs" className="mt-0">
+                <TabsContent value="jobs" className="mt-0 bg-transparent p-0">
                   <div className="flex flex-col items-end gap-2 mb-4">
                     {companies.length === 0 && (
                       <p className="text-xs text-muted-foreground">Creá una empresa primero</p>
@@ -799,7 +799,7 @@ export default function AdminPage() {
                     </Table>
                   )}
                 </TabsContent>
-                <TabsContent value="admins" className="mt-0">
+                <TabsContent value="admins" className="mt-0 bg-transparent p-0">
                   <div className="flex justify-end mb-4">
                     <Button
                       onClick={() => {
