@@ -50,9 +50,9 @@ export default async function HomePage() {
                 <Image
                   src="/home-tagline-logo.png"
                   alt="Red Nordeste"
-                  width={420}
-                  height={120}
-                  className="h-16 w-auto object-contain md:h-20"
+                  width={900}
+                  height={260}
+                  className="h-28 w-auto max-w-[92vw] object-contain md:h-36 lg:h-44"
                   priority
                 />
               </div>
