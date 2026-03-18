@@ -7,6 +7,7 @@ import { JobCard } from "@/components/job-card";
 import { cities } from "@/lib/data";
 import { Briefcase, Users, Building2, MapPin, ArrowRight } from "lucide-react";
 import { fetchJobs, fetchCompanies, fetchUsersList } from "@/lib/api";
+import Image from "next/image";
 
 export default async function HomePage() {
   let latestJobs: Awaited<ReturnType<typeof fetchJobs>> = [];
@@ -45,6 +46,16 @@ export default async function HomePage() {
                 Paraguay. Conectamos talentos con las mejores oportunidades
                 laborales de la región.
               </p>
+              <div className="mt-6 flex justify-center">
+                <Image
+                  src="/home-tagline-logo.png"
+                  alt="Red Nordeste"
+                  width={420}
+                  height={120}
+                  className="h-16 w-auto object-contain md:h-20"
+                  priority
+                />
+              </div>
 
               <div className="mt-10">
                 <JobSearchBar />
