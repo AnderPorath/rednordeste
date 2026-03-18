@@ -20,7 +20,7 @@ export function Logo({ href = "/", className = "", size = "lg" }: LogoProps) {
   const s = sizes[size];
   const img = (
     <Image
-      src="/logo.png?v=2"
+      src="/logo.png?v=3"
       alt="Red Nordeste - Tu trabajo en Itapúa"
       width={s.width}
       height={s.height}
